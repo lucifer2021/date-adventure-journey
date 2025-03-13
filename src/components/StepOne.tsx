@@ -7,9 +7,11 @@ import AnimatedTransition from './AnimatedTransition';
 interface StepOneProps {
   onYes: () => void;
   onNo: () => void;
+  isInvitationView?: boolean;
+  inviterName?: string;
 }
 
-const StepOne: React.FC<StepOneProps> = ({ onYes, onNo }) => {
+const StepOne: React.FC<StepOneProps> = ({ onYes, onNo, isInvitationView = false, inviterName = '' }) => {
   const [response, setResponse] = useState<'yes' | 'no' | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -32,7 +34,9 @@ const StepOne: React.FC<StepOneProps> = ({ onYes, onNo }) => {
   return (
     <div className="step-container">
       <h1 className="step-title animate-slide-up">
-        Wanna Go on a Date with Me?
+        {isInvitationView 
+          ? `${inviterName} invited you on a date!` 
+          : 'Wanna Go on a Date with Me?'}
       </h1>
       <p className="step-subtitle animate-slide-up" style={{ animationDelay: '100ms' }}>
         (Choose wisely)
