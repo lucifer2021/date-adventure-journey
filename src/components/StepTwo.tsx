@@ -47,7 +47,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
         >
           <DatePicker
             selected={dateTime}
-            onChange={(date) => setDateTime(date)}
+            onChange={(date: Date) => setDateTime(date)}
             showTimeSelect
             timeFormat="HH:mm"
             timeIntervals={15}

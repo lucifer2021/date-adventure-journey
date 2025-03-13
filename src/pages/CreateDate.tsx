@@ -72,6 +72,7 @@ const CreateDate = () => {
       setLoading(true);
       const token = generateUniqueToken();
       
+      // Fix the insert operation format
       const { data, error } = await supabase
         .from('dates')
         .insert({
