@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 350 89% 60%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -32,22 +33,15 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.8rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -61,7 +55,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 350 89% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -95,7 +89,154 @@
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  html, body {
+    @apply antialiased w-full h-full;
   }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #root {
+    @apply w-full h-full;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-md bg-white/70 dark:bg-black/60 rounded-xl shadow-md;
+  }
+  
+  .loading-shimmer {
+    @apply bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:500px_100%] animate-shimmer;
+  }
+  
+  .btn-primary {
+    @apply px-8 py-3 bg-date-primary text-white rounded-full font-medium transition-all 
+           hover:shadow-lg hover:translate-y-[-2px] active:translate-y-[0px];
+  }
+  
+  .btn-secondary {
+    @apply px-8 py-3 bg-white border border-gray-200 text-date-secondary rounded-full font-medium 
+           transition-all hover:shadow-md hover:translate-y-[-2px] active:translate-y-[0px];
+  }
+  
+  .btn-outline {
+    @apply px-8 py-3 bg-transparent border border-date-primary text-date-primary rounded-full font-medium 
+           transition-all hover:bg-date-primary hover:text-white hover:shadow-md;
+  }
+  
+  .btn-no {
+    @apply px-8 py-3 bg-gray-100 text-gray-600 rounded-full font-medium 
+           transition-all hover:bg-gray-200 hover:text-gray-800;
+  }
+
+  .step-container {
+    @apply flex flex-col items-center justify-center max-w-xl w-full mx-auto p-6 transition-all;
+  }
+  
+  .step-title {
+    @apply text-3xl md:text-4xl font-bold mb-6 tracking-tight text-center;
+  }
+  
+  .step-subtitle {
+    @apply text-lg md:text-xl text-gray-600 mb-8 text-center max-w-md mx-auto;
+  }
+  
+  .gif-container {
+    @apply rounded-2xl overflow-hidden w-full aspect-video max-w-md shadow-lg mb-8;
+  }
+
+  .food-card {
+    @apply relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 
+           bg-white shadow-sm hover:shadow-md;
+  }
+  
+  .food-card.selected {
+    @apply ring-2 ring-date-primary shadow-md;
+  }
+  
+  .food-image {
+    @apply w-full aspect-square object-cover;
+  }
+  
+  .food-title {
+    @apply absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent 
+           text-white font-medium text-center;
+  }
+}
+
+.calendar-wrapper .react-datepicker {
+  @apply font-sans border-none shadow-lg rounded-xl overflow-hidden;
+}
+
+.calendar-wrapper .react-datepicker__header {
+  @apply bg-date-muted border-none rounded-t-xl;
+}
+
+.calendar-wrapper .react-datepicker__current-month {
+  @apply text-date-secondary font-medium;
+}
+
+.calendar-wrapper .react-datepicker__day-name {
+  @apply text-date-secondary/70;
+}
+
+.calendar-wrapper .react-datepicker__day {
+  @apply rounded-full transition-colors hover:bg-date-primary hover:text-white;
+}
+
+.calendar-wrapper .react-datepicker__day--selected {
+  @apply bg-date-primary text-white;
+}
+
+.calendar-wrapper .react-datepicker__time-container {
+  @apply border-l border-gray-200;
+}
+
+.calendar-wrapper .react-datepicker__time-box {
+  @apply rounded-none;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+/* Excitement slider styles */
+.excitement-slider {
+  @apply appearance-none w-full h-2 rounded-full bg-gray-200 outline-none;
+}
+
+.excitement-slider::-webkit-slider-thumb {
+  @apply appearance-none w-6 h-6 rounded-full bg-date-primary 
+         cursor-pointer transition-all hover:scale-110;
+}
+
+.excitement-slider::-moz-range-thumb {
+  @apply w-6 h-6 rounded-full bg-date-primary 
+         border-none cursor-pointer transition-all hover:scale-110;
+}
+
+/* Scroll animations */
+.fade-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
