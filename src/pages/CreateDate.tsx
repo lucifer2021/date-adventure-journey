@@ -72,10 +72,10 @@ const CreateDate = () => {
       setLoading(true);
       const token = generateUniqueToken();
       
-      // Fix the insert operation format
+      // Fix the insert operation format - passing an array with one object
       const { data, error } = await supabase
         .from('dates')
-        .insert({
+        .insert([{
           inviter_id: user.id,
           invitee_email: inviteeEmail,
           invite_token: token,
@@ -84,7 +84,7 @@ const CreateDate = () => {
           movie: movie,
           excitement_level: excitementLevel,
           status: 'pending'
-        })
+        }])
         .select();
 
       if (error) throw error;
@@ -92,11 +92,11 @@ const CreateDate = () => {
       // Create a notification for the inviter
       await supabase
         .from('notifications')
-        .insert({
+        .insert([{
           user_id: user.id,
           message: `You've created a date invitation for ${inviteeEmail}`,
           date_id: data[0].id
-        });
+        }]);
 
       // Generate the invite link
       const baseUrl = window.location.origin;
