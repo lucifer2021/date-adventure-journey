@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -71,9 +72,10 @@ const CreateDate = () => {
       setLoading(true);
       const token = generateUniqueToken();
       
+      // Fixed: Insert into dates table - using array syntax with a single object
       const { data, error } = await supabase
         .from('dates')
-        .insert({
+        .insert([{  // Wrap object in array
           inviter_id: user.id,
           invitee_email: inviteeEmail,
           invite_token: token,
@@ -82,18 +84,19 @@ const CreateDate = () => {
           movie: movie,
           excitement_level: excitementLevel,
           status: 'pending'
-        })
+        }])
         .select();
 
       if (error) throw error;
 
+      // Fixed: Insert into notifications table - using array syntax with a single object
       await supabase
         .from('notifications')
-        .insert({
+        .insert([{  // Wrap object in array
           user_id: user.id,
           message: `You've created a date invitation for ${inviteeEmail}`,
           date_id: data[0].id
-        });
+        }]);
 
       const baseUrl = window.location.origin;
       const link = `${baseUrl}/invite/${token}`;
