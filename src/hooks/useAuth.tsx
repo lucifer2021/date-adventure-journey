@@ -6,6 +6,7 @@ type AuthContextType = {
   session: any | null;
   user: any | null;
   loading: boolean;
+  updateUserProfile?: (name: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -39,10 +40,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Function to update user profile
+  const updateUserProfile = async (name: string) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ name })
+        .eq('id', user.id);
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      throw error;
+    }
+  };
+
   const value = {
     session,
     user,
     loading,
+    updateUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

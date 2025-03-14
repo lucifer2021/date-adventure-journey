@@ -22,7 +22,7 @@ const DateInvite = () => {
       try {
         const { data, error } = await supabase
           .from('dates')
-          .select('*, profiles:inviter_id(name)')
+          .select('*, profiles:inviter_id(*)')
           .eq('invite_token', token)
           .single();
 

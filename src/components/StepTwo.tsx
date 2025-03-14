@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Calendar } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import AnimatedTransition from './AnimatedTransition';
@@ -33,9 +33,14 @@ const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
         className="gif-container mb-6"
       >
         <img
-          src="https://media.giphy.com/media/3ohhwJlKHfEqTm3Py0/giphy.gif"
+          src="https://media.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif"
           alt="Calendar animation"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-lg"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = 'https://media.giphy.com/media/l0HlvG9VPf0SQZ9Oo/giphy.gif';
+          }}
         />
       </AnimatedTransition>
 

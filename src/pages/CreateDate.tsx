@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,7 +14,6 @@ const CreateDate = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [inviteeName, setInviteeName] = useState('');
-  const [inviteeEmail, setInviteeEmail] = useState('');
   const [inviteLink, setInviteLink] = useState('');
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('');
@@ -40,10 +38,10 @@ const CreateDate = () => {
   }, [user]);
 
   const handleCreateDate = async () => {
-    if (!inviteeName || !inviteeEmail) {
+    if (!inviteeName) {
       toast({
         title: "Missing information",
-        description: "Please provide both a name and email for your date invitation.",
+        description: "Please provide a name for your date invitation.",
         variant: "destructive",
       });
       return;
@@ -53,20 +51,23 @@ const CreateDate = () => {
       setLoading(true);
       const token = generateUniqueToken();
       
-      // Create a pending date invitation with token, invitee name and email
+      // Create a pending date invitation with token and invitee name
       const { data, error } = await supabase
         .from('dates')
         .insert([{
           inviter_id: user.id,
           inviter_name: userName,
           invitee_name: inviteeName,
-          invitee_email: inviteeEmail,
+          invitee_email: `${inviteeName.toLowerCase().replace(/\s+/g, '.')}@placeholder.com`, // Create a placeholder email
           invite_token: token,
           status: 'pending'
         }])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Insert error:", error);
+        throw error;
+      }
 
       // Create notification for the inviter
       await supabase
@@ -120,7 +121,7 @@ const CreateDate = () => {
           <div>
             <h2 className="text-2xl font-bold mb-4">Who's the Lucky Person?</h2>
             <p className="text-gray-600 mb-6">
-              Enter the details of the person you want to invite on a date.
+              Enter the name of the person you want to invite on a date.
               They'll receive a link to set up the date details.
             </p>
             <div className="space-y-4">
@@ -134,21 +135,11 @@ const CreateDate = () => {
                   onChange={(e) => setInviteeName(e.target.value)}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="invitee-email">Their Email Address</Label>
-                <Input
-                  id="invitee-email"
-                  type="email"
-                  placeholder="their@email.com"
-                  value={inviteeEmail}
-                  onChange={(e) => setInviteeEmail(e.target.value)}
-                />
-              </div>
             </div>
             <div className="flex justify-end mt-6">
               <Button 
                 onClick={handleCreateDate}
-                disabled={!inviteeName || !inviteeEmail || loading}
+                disabled={!inviteeName || loading}
                 className="gap-2"
               >
                 {loading ? (
