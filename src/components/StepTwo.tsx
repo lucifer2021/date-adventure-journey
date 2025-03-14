@@ -28,12 +28,12 @@ const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
       </p>
 
       <AnimatedTransition 
-        show={isCalendarInteracting}
+        show={isCalendarInteracting || !!dateTime}
         animateIn="animate-scale-in"
         className="gif-container mb-6"
       >
         <img
-          src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWNidXVpajR0bzUyZzNyZzQ2aXRybm9kaWU2Y3p0d25mZDVndWlsayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ohhwJlKHfEqTm3Py0/giphy.gif"
+          src="https://media.giphy.com/media/3ohhwJlKHfEqTm3Py0/giphy.gif"
           alt="Calendar animation"
           className="w-full h-full object-cover"
         />
@@ -44,6 +44,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
           className="calendar-wrapper w-full" 
           onMouseEnter={() => setIsCalendarInteracting(true)}
           onMouseLeave={() => setIsCalendarInteracting(false)}
+          onTouchStart={() => setIsCalendarInteracting(true)}
+          onTouchEnd={() => setIsCalendarInteracting(false)}
         >
           <DatePicker
             selected={dateTime}
