@@ -47,13 +47,19 @@ const DateInvite = () => {
     }
   }, [token, toast]);
 
-  const handleResponse = async (response: 'accepted' | 'declined') => {
+  const handleCompleteDate = async (dateDetails) => {
     try {
       setLoadingResponse(true);
       
       const { error } = await supabase
         .from('dates')
-        .update({ status: response })
+        .update({ 
+          status: 'accepted',
+          date_time: dateDetails.dateTime,
+          food: dateDetails.food,
+          movie: dateDetails.movie,
+          excitement_level: dateDetails.excitementLevel
+        })
         .eq('id', date.id);
 
       if (error) throw error;
@@ -61,29 +67,61 @@ const DateInvite = () => {
       // Create notification for the inviter
       await supabase
         .from('notifications')
-        .insert({
+        .insert([{
           user_id: date.inviter_id,
-          message: `Your date invitation has been ${response} by ${date.invitee_email}`,
+          message: `Your date invitation has been accepted by ${date.invitee_email} and all details have been set!`,
           date_id: date.id
-        });
+        }]);
 
       toast({
-        title: response === 'accepted' ? 'Date Accepted!' : 'Date Declined',
-        description: response === 'accepted' 
-          ? "You've accepted the date invitation. It's a date!" 
-          : "You've declined the date invitation.",
+        title: 'Date Accepted!',
+        description: "You've accepted the date invitation and set all the details. It's a date!"
       });
 
-      if (response === 'accepted') {
-        navigate('/');
-      } else {
-        navigate('/');
-      }
+      navigate('/');
     } catch (error) {
-      console.error(`Error ${response} date:`, error);
+      console.error(`Error completing date:`, error);
       toast({
         title: 'Error',
-        description: `Failed to ${response} the date invitation.`,
+        description: `Failed to complete the date invitation.`,
+        variant: 'destructive',
+      });
+    } finally {
+      setLoadingResponse(false);
+    }
+  };
+
+  const handleDecline = async () => {
+    try {
+      setLoadingResponse(true);
+      
+      const { error } = await supabase
+        .from('dates')
+        .update({ status: 'declined' })
+        .eq('id', date.id);
+
+      if (error) throw error;
+
+      // Create notification for the inviter
+      await supabase
+        .from('notifications')
+        .insert([{
+          user_id: date.inviter_id,
+          message: `Your date invitation has been declined by ${date.invitee_email}`,
+          date_id: date.id
+        }]);
+
+      toast({
+        title: 'Date Declined',
+        description: "You've declined the date invitation."
+      });
+
+      navigate('/');
+    } catch (error) {
+      console.error(`Error declining date:`, error);
+      toast({
+        title: 'Error',
+        description: `Failed to decline the date invitation.`,
         variant: 'destructive',
       });
     } finally {
@@ -140,8 +178,13 @@ const DateInvite = () => {
     );
   }
 
-  // Using the DateInvitation component for invitee view
-  return <DateInvitation isInvitationView={true} dateData={date} onAccept={() => handleResponse('accepted')} onDecline={() => handleResponse('declined')} />;
+  // Using the DateInvitation component for invitee view with complete date flow
+  return <DateInvitation 
+    isInvitationView={true} 
+    dateData={date} 
+    onComplete={handleCompleteDate} 
+    onDecline={handleDecline} 
+  />;
 };
 
 export default DateInvite;

@@ -33,6 +33,7 @@ interface DateInvitationProps {
   dateData?: any;
   onAccept?: () => void;
   onDecline?: () => void;
+  onComplete?: (dateDetails: DateDetails) => void;
 }
 
 const DateInvitation: React.FC<DateInvitationProps> = ({ 
@@ -40,7 +41,8 @@ const DateInvitation: React.FC<DateInvitationProps> = ({
   isInvitationView = false,
   dateData = null,
   onAccept,
-  onDecline
+  onDecline,
+  onComplete
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [response, setResponse] = useState<'yes' | 'no' | null>(null);
@@ -78,7 +80,10 @@ const DateInvitation: React.FC<DateInvitationProps> = ({
 
   const handleYesResponse = () => {
     setResponse('yes');
-    if (isInvitationView && onAccept) {
+    if (isInvitationView) {
+      // For invitation view, move to the next step to select date/time
+      setCurrentStep(2);
+    } else if (onAccept) {
       onAccept();
     } else {
       setCurrentStep(2);
@@ -110,7 +115,16 @@ const DateInvitation: React.FC<DateInvitationProps> = ({
 
   const handleExcitementSelection = (excitementLevel: number) => {
     setDateDetails(prev => ({ ...prev, excitementLevel }));
-    setCurrentStep(6);
+    // If this is the invitation view, we need to complete the date with the chosen details
+    if (isInvitationView && onComplete) {
+      setCurrentStep(6);
+      // Short delay to show the final screen before completing
+      setTimeout(() => {
+        onComplete(dateDetails);
+      }, 2000);
+    } else {
+      setCurrentStep(6);
+    }
   };
 
   const handleRestart = () => {
@@ -130,7 +144,7 @@ const DateInvitation: React.FC<DateInvitationProps> = ({
       return null;
     }
 
-    if (isInvitationView && dateData) {
+    if (isInvitationView && dateData && currentStep === 1) {
       // For invitation view, we directly show the first step with the data
       return <StepOne onYes={handleYesResponse} onNo={handleNoResponse} isInvitationView={true} inviterName={dateData.inviter_name || "Someone special"} />;
     }
