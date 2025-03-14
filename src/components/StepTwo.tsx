@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Calendar } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import AnimatedTransition from './AnimatedTransition';
@@ -13,6 +13,7 @@ interface StepTwoProps {
 const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
   const [dateTime, setDateTime] = useState<Date | null>(null);
   const [isCalendarInteracting, setIsCalendarInteracting] = useState(false);
+  const [gifError, setGifError] = useState(false);
 
   const handleContinue = () => {
     if (dateTime) {
@@ -28,14 +29,15 @@ const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
       </p>
 
       <AnimatedTransition 
-        show={isCalendarInteracting}
+        show={isCalendarInteracting || !!dateTime}
         animateIn="animate-scale-in"
         className="gif-container mb-6"
       >
         <img
-          src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWNidXVpajR0bzUyZzNyZzQ2aXRybm9kaWU2Y3p0d25mZDVndWlsayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ohhwJlKHfEqTm3Py0/giphy.gif"
+          src={gifError ? 'https://media.giphy.com/media/l0HlvG9VPf0SQZ9Oo/giphy.gif' : 'https://media.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif'}
           alt="Calendar animation"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-lg"
+          onError={() => setGifError(true)}
         />
       </AnimatedTransition>
 
@@ -44,6 +46,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
           className="calendar-wrapper w-full" 
           onMouseEnter={() => setIsCalendarInteracting(true)}
           onMouseLeave={() => setIsCalendarInteracting(false)}
+          onTouchStart={() => setIsCalendarInteracting(true)}
+          onTouchEnd={() => setIsCalendarInteracting(false)}
         >
           <DatePicker
             selected={dateTime}
