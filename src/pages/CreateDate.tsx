@@ -72,10 +72,10 @@ const CreateDate = () => {
       setLoading(true);
       const token = generateUniqueToken();
       
-      // Updated: Insert into dates table with a single object
+      // Fixed: Use the correct format for Supabase insert
       const { data, error } = await supabase
         .from('dates')
-        .insert({
+        .insert([{
           inviter_id: user.id,
           invitee_email: inviteeEmail,
           invite_token: token,
@@ -84,19 +84,19 @@ const CreateDate = () => {
           movie: movie,
           excitement_level: excitementLevel,
           status: 'pending'
-        })
+        }])
         .select();
 
       if (error) throw error;
 
-      // Updated: Insert into notifications table with a single object
+      // Fixed: Insert into notifications table with proper array format
       await supabase
         .from('notifications')
-        .insert({
+        .insert([{
           user_id: user.id,
           message: `You've created a date invitation for ${inviteeEmail}`,
           date_id: data[0].id
-        });
+        }]);
 
       const baseUrl = window.location.origin;
       const link = `${baseUrl}/invite/${token}`;
