@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/components/ui/use-toast';
-import { Calendar, Clock, Film, Utensils, Mail, Heart, Plus, Copy, Eye } from 'lucide-react';
+import { Calendar, Clock, Film, Utensils, Mail, Heart, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 const Dashboard = () => {
@@ -59,6 +60,7 @@ const Dashboard = () => {
     fetchDates();
     fetchNotifications();
 
+    // Set up realtime subscription for dates
     const datesSubscription = supabase
       .channel('dates-changes')
       .on('postgres_changes', 
@@ -68,6 +70,7 @@ const Dashboard = () => {
       })
       .subscribe();
 
+    // Set up realtime subscription for notifications
     const notificationsSubscription = supabase
       .channel('notifications-changes')
       .on('postgres_changes',
@@ -93,26 +96,6 @@ const Dashboard = () => {
         return <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Declined</Badge>;
       default:
         return <Badge variant="outline">Unknown</Badge>;
-    }
-  };
-
-  const copyInviteLink = async (date) => {
-    try {
-      const baseUrl = window.location.origin;
-      const link = `${baseUrl}/invite/${date.invite_token}`;
-      await navigator.clipboard.writeText(link);
-      
-      toast({
-        title: "Link copied",
-        description: "Invitation link copied to clipboard."
-      });
-    } catch (error) {
-      console.error("Error copying link:", error);
-      toast({
-        title: "Error",
-        description: "Failed to copy invitation link.",
-        variant: "destructive",
-      });
     }
   };
 
@@ -160,8 +143,8 @@ const Dashboard = () => {
                         </CardTitle>
                         <CardDescription>
                           {date.inviter_id === user.id 
-                            ? `Sent to ${date.invitee_name || date.invitee_email}`
-                            : `From ${date.inviter_name || date.inviter_email || 'Someone special'}`}
+                            ? `Sent to ${date.invitee_email}`
+                            : `From ${date.inviter_email || 'Someone special'}`}
                         </CardDescription>
                       </div>
                       <div className="text-sm text-gray-500">
@@ -223,14 +206,13 @@ const Dashboard = () => {
                   </CardContent>
                   <CardFooter>
                     {date.status === 'pending' && date.inviter_id === user.id && (
-                      <Button variant="outline" className="w-full" onClick={() => copyInviteLink(date)}>
-                        <Copy className="mr-2 h-4 w-4" />
+                      <Button variant="outline" className="w-full" onClick={() => navigate(`/invite/${date.invite_token}`)}>
+                        <Mail className="mr-2 h-4 w-4" />
                         Copy Invitation Link
                       </Button>
                     )}
                     {date.status === 'accepted' && (
                       <Button variant="outline" className="w-full" onClick={() => navigate(`/date-details/${date.id}`)}>
-                        <Eye className="mr-2 h-4 w-4" />
                         View Details
                       </Button>
                     )}

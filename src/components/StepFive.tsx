@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import AnimatedTransition from './AnimatedTransition';
-import { Slider } from '@/components/ui/slider';
 
 interface StepFiveProps {
   onNext: (excitementLevel: number) => void;
@@ -11,14 +10,15 @@ interface StepFiveProps {
 
 const StepFive: React.FC<StepFiveProps> = ({ onNext }) => {
   const [excitement, setExcitement] = useState<number>(5);
+  const [isDragging, setIsDragging] = useState(false);
 
   const getExcitementGif = (level: number) => {
     if (level <= 3) {
-      return "https://media.giphy.com/media/3o7TKqm1mNujcBPSpy/giphy.gif";
+      return "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOXdkeXZlbmY2bHR3eW5rcm44Y3FwZTJ1Mm5wZnRjdXN3NjJnMDkxOCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7TKqm1mNujcBPSpy/giphy.gif";
     } else if (level <= 7) {
-      return "https://media.giphy.com/media/l0HlHFRbmaZtBRhXG/giphy.gif";
+      return "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTQxbW1qeWRnZ205a2kxNzR3Z3l6ZzRoc3I2NmFkaXNpcjBybm5mcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlHFRbmaZtBRhXG/giphy.gif";
     } else {
-      return "https://media.giphy.com/media/5GoVLqeAOo6PK/giphy.gif";
+      return "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExc3c2dXUwbzc3N3lpYXcwaWM5bTh1anJ6cmt3amlxYm1wbnlrb3g1ayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5GoVLqeAOo6PK/giphy.gif";
     }
   };
 
@@ -34,10 +34,6 @@ const StepFive: React.FC<StepFiveProps> = ({ onNext }) => {
 
   const handleContinue = () => {
     onNext(excitement);
-  };
-
-  const handleSliderChange = (value: number[]) => {
-    setExcitement(value[0]);
   };
 
   return (
@@ -64,13 +60,16 @@ const StepFive: React.FC<StepFiveProps> = ({ onNext }) => {
           <span>Meh</span>
           <span>OMG YES!</span>
         </div>
-        <Slider
-          defaultValue={[5]}
-          max={10}
-          min={1}
-          step={1}
-          onValueChange={handleSliderChange}
-          value={[excitement]}
+        <input
+          type="range"
+          min="1"
+          max="10"
+          value={excitement}
+          onChange={(e) => setExcitement(parseInt(e.target.value))}
+          onMouseDown={() => setIsDragging(true)}
+          onMouseUp={() => setIsDragging(false)}
+          onTouchStart={() => setIsDragging(true)}
+          onTouchEnd={() => setIsDragging(false)}
           className="excitement-slider"
         />
       </div>

@@ -120,7 +120,7 @@ const DateInvitation: React.FC<DateInvitationProps> = ({
       setCurrentStep(6);
       // Short delay to show the final screen before completing
       setTimeout(() => {
-        onComplete({...dateDetails, excitementLevel});
+        onComplete(dateDetails);
       }, 2000);
     } else {
       setCurrentStep(6);
@@ -146,12 +146,7 @@ const DateInvitation: React.FC<DateInvitationProps> = ({
 
     if (isInvitationView && dateData && currentStep === 1) {
       // For invitation view, we directly show the first step with the data
-      return <StepOne 
-        onYes={handleYesResponse} 
-        onNo={handleNoResponse} 
-        isInvitationView={true} 
-        inviterName={dateData.inviter_name || "Someone special"} 
-      />;
+      return <StepOne onYes={handleYesResponse} onNo={handleNoResponse} isInvitationView={true} inviterName={dateData.inviter_name || "Someone special"} />;
     }
 
     switch (currentStep) {

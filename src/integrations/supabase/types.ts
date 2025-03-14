@@ -18,7 +18,6 @@ export type Database = {
           id: string
           invite_token: string
           invitee_email: string
-          invitee_name: string | null
           inviter_id: string
           movie: Json | null
           status: string | null
@@ -31,7 +30,6 @@ export type Database = {
           id?: string
           invite_token: string
           invitee_email: string
-          invitee_name?: string | null
           inviter_id: string
           movie?: Json | null
           status?: string | null
@@ -44,7 +42,6 @@ export type Database = {
           id?: string
           invite_token?: string
           invitee_email?: string
-          invitee_name?: string | null
           inviter_id?: string
           movie?: Json | null
           status?: string | null

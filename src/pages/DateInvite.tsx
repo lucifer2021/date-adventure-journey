@@ -22,19 +22,12 @@ const DateInvite = () => {
       try {
         const { data, error } = await supabase
           .from('dates')
-          .select('*, profiles:inviter_id(*)')
+          .select('*')
           .eq('invite_token', token)
           .single();
 
         if (error) throw error;
-        
-        // Combine profile data with date data
-        const dateWithInviterName = {
-          ...data,
-          inviter_name: data.profiles?.name || data.inviter_name || "Someone special"
-        };
-        
-        setDate(dateWithInviterName);
+        setDate(data);
         setAuthorized(true);
       } catch (error) {
         console.error('Error fetching date invitation:', error);
@@ -76,7 +69,7 @@ const DateInvite = () => {
         .from('notifications')
         .insert([{
           user_id: date.inviter_id,
-          message: `Your date invitation has been accepted by ${date.invitee_name || date.invitee_email} and all details have been set!`,
+          message: `Your date invitation has been accepted by ${date.invitee_email} and all details have been set!`,
           date_id: date.id
         }]);
 
@@ -114,7 +107,7 @@ const DateInvite = () => {
         .from('notifications')
         .insert([{
           user_id: date.inviter_id,
-          message: `Your date invitation has been declined by ${date.invitee_name || date.invitee_email}`,
+          message: `Your date invitation has been declined by ${date.invitee_email}`,
           date_id: date.id
         }]);
 
