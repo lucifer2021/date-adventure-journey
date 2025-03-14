@@ -30,6 +30,7 @@ const Auth = () => {
     
     try {
       if (isSignUp) {
+        // Create user with email and password
         const { data, error } = await supabase.auth.signUp({ 
           email, 
           password,
@@ -42,15 +43,38 @@ const Auth = () => {
         
         if (error) throw error;
         
-        // Update profile with name
+        // Create or update profile with name
         if (data?.user) {
-          const { error: profileError } = await supabase
+          // First check if profile exists
+          const { data: existingProfile } = await supabase
             .from('profiles')
-            .update({ name })
-            .eq('id', data.user.id);
-          
-          if (profileError) {
-            console.error("Error updating profile:", profileError);
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+            
+          if (existingProfile) {
+            // Update existing profile
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .update({ name, email: data.user.email })
+              .eq('id', data.user.id);
+              
+            if (profileError) {
+              console.error("Error updating profile:", profileError);
+            }
+          } else {
+            // Insert new profile
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert([{ 
+                id: data.user.id, 
+                name, 
+                email: data.user.email 
+              }]);
+              
+            if (profileError) {
+              console.error("Error creating profile:", profileError);
+            }
           }
         }
         

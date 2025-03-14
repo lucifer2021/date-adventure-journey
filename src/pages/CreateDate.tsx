@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { ArrowRight, Copy, Send } from 'lucide-react';
+import { ArrowRight, Copy } from 'lucide-react';
 import { generateUniqueToken } from '@/lib/utils';
 
 const CreateDate = () => {
@@ -19,7 +20,7 @@ const CreateDate = () => {
   const [userName, setUserName] = useState('');
 
   // Fetch user profile data when component mounts
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchUserProfile = async () => {
       if (user) {
         const { data, error } = await supabase
@@ -50,6 +51,14 @@ const CreateDate = () => {
     try {
       setLoading(true);
       const token = generateUniqueToken();
+      
+      console.log("Creating date invitation with:", {
+        inviter_id: user.id,
+        inviter_name: userName,
+        invitee_name: inviteeName,
+        email: `${inviteeName.toLowerCase().replace(/\s+/g, '.')}@placeholder.com`,
+        token
+      });
       
       // Create a pending date invitation with token and invitee name
       const { data, error } = await supabase

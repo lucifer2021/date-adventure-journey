@@ -13,6 +13,7 @@ interface StepTwoProps {
 const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
   const [dateTime, setDateTime] = useState<Date | null>(null);
   const [isCalendarInteracting, setIsCalendarInteracting] = useState(false);
+  const [gifError, setGifError] = useState(false);
 
   const handleContinue = () => {
     if (dateTime) {
@@ -33,14 +34,10 @@ const StepTwo: React.FC<StepTwoProps> = ({ onNext }) => {
         className="gif-container mb-6"
       >
         <img
-          src="https://media.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif"
+          src={gifError ? 'https://media.giphy.com/media/l0HlvG9VPf0SQZ9Oo/giphy.gif' : 'https://media.giphy.com/media/3o7aD5euYKz5Ly7Wq4/giphy.gif'}
           alt="Calendar animation"
           className="w-full h-full object-cover rounded-lg"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.onerror = null;
-            target.src = 'https://media.giphy.com/media/l0HlvG9VPf0SQZ9Oo/giphy.gif';
-          }}
+          onError={() => setGifError(true)}
         />
       </AnimatedTransition>
 

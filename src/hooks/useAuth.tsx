@@ -6,13 +6,14 @@ type AuthContextType = {
   session: any | null;
   user: any | null;
   loading: boolean;
-  updateUserProfile?: (name: string) => Promise<void>;
+  updateUserProfile: (name: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   loading: true,
+  updateUserProfile: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -45,12 +46,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (!user) return;
     
     try {
-      const { error } = await supabase
+      // First update the user metadata in auth
+      const { error: authError } = await supabase.auth.updateUser({
+        data: { name }
+      });
+      
+      if (authError) throw authError;
+      
+      // Then update the profile record
+      const { error: profileError } = await supabase
         .from('profiles')
         .update({ name })
         .eq('id', user.id);
       
-      if (error) throw error;
+      if (profileError) throw profileError;
+      
+      // Update local user state with the new name
+      setUser(prev => prev ? {...prev, user_metadata: {...(prev.user_metadata || {}), name}} : null);
+      
     } catch (error) {
       console.error('Error updating user profile:', error);
       throw error;
